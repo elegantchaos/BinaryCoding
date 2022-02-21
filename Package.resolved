@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Bytes",
+        "repositoryURL": "https://github.com/elegantchaos/Bytes.git",
+        "state": {
+          "branch": "float-support",
+          "revision": "dfd75eda165e698ec971dafc7a1bf469ca361ac6",
+          "version": null
+        }
+      },
+      {
         "package": "Matchable",
         "repositoryURL": "https://github.com/elegantchaos/Matchable.git",
         "state": {
