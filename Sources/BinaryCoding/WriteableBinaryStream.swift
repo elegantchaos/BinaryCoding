@@ -31,13 +31,17 @@ extension WriteableBinaryStreamEncodingAdaptor {
     }
     
     mutating func encode(_ value: Double) throws {
-        fatalError("to do")
+        try stream.writeFloat(value)
     }
     
     mutating func encode(_ value: Float) throws {
-        fatalError("to do")
+        try stream.writeFloat(value)
     }
-    
+
+    mutating func encode(_ value: Float16) throws {
+        try stream.writeFloat(value)
+    }
+
     mutating func encode(_ value: Int) throws {
         stream.writeInt(value)
     }

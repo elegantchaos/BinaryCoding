@@ -8,7 +8,7 @@ import XCTestExtensions
 
 @testable import BinaryCoding
 
-final class BinaryCodingTests: XCTestCase {
+final class IntCodingTests: XCTestCase {
     func testEncodeInt() throws {
         
         let encoder = BinaryEncoder()

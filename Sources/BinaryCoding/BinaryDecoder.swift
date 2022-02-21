@@ -14,10 +14,6 @@ public extension BinaryDecodable {
     init(fromBinary decoder: BinaryDecoder) throws {
         print("fallback binary decoding for \(Self.self)")
         
-        if Self.self == String.self {
-            print("blaj")
-        }
-        
         try self.init(from: decoder)
     }
 }
