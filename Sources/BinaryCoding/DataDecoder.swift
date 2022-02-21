@@ -28,11 +28,11 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     }
 
     func readDecodable<T: Decodable>(_ kind: T.Type) throws -> T {
-        if let unconstrained = kind as? UnboundedDecodable.Type {
+        if kind is String.Type {
+            return try readString() as! T
+        } else if let unconstrained = kind as? UnboundedDecodable.Type {
             return try unconstrained.decode(bytes: remainingCount(), from: self) as! T
-        }
-
-        if let binaryDecodable = kind as? BinaryDecodable.Type {
+        } else if let binaryDecodable = kind as? BinaryDecodable.Type {
             return try binaryDecodable.init(fromBinary: self) as! T
         } else {
             return try T(from: self)
@@ -47,7 +47,9 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         index = end
         return slice
     }
-    
+
+//    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger {
+
     func read(until: Byte)  throws -> ArraySlice<Byte> {
         
         guard let end = data[index...].firstIndex(of: until) else { throw BasicDecoderError.outOfData }
