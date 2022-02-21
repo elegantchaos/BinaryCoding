@@ -6,6 +6,10 @@
 import Bytes
 import Foundation
 
+public protocol BinaryEncoder: Encoder {
+    var stringEncoding: String.Encoding { get }
+}
+
 public protocol BinaryEncodable: Encodable {
     func binaryEncode(to encoder: Encoder) throws
 }
@@ -18,8 +22,4 @@ public extension BinaryEncodable {
 
 enum BinaryEncodingError: Error {
     case couldntEncodeString
-}
-
-public protocol BinaryEncoder: Encoder {
-    var stringEncoding: String.Encoding { get }
 }

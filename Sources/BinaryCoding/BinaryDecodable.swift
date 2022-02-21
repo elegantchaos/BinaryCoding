@@ -6,6 +6,10 @@
 import Bytes
 import Foundation
 
+public protocol BinaryDecoder: Decoder {
+    var stringEncoding: String.Encoding { get }
+}
+
 public protocol BinaryDecodable: Decodable {
     init(fromBinary: BinaryDecoder) throws
 }
@@ -16,8 +20,4 @@ public extension BinaryDecodable {
         
         try self.init(from: decoder)
     }
-}
-
-public protocol BinaryDecoder: Decoder {
-    var stringEncoding: String.Encoding { get }
 }
