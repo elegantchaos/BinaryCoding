@@ -6,6 +6,8 @@
 import Foundation
 
 protocol ReadableBinaryStream {
+    var stringEncoding: String.Encoding { get }
+
     func read(_ count: Int) throws -> ArraySlice<UInt8>
     func read(until: UInt8)  throws -> ArraySlice<UInt8>
     func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger
@@ -19,7 +21,7 @@ protocol ReadableBinaryStream {
 extension ReadableBinaryStream {
     func readString() throws -> String {
         let bytes = try read(until: 0)
-        guard let string = String(bytes: bytes, encoding: .utf8) else { throw BasicDecoderError.badStringEncoding }
+        guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
         return string
     }
 }

@@ -6,12 +6,27 @@
 import Foundation
 
 protocol WriteableBinaryStream {
+    var stringEncoding: String.Encoding { get }
+    
     func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger
-    func writeFloat<Value>(_ value: Value) throws where Value: BinaryFloatingPoint
+    func write<Value>(_ value: Value) throws where Value: BinaryFloatingPoint
     func write(_ value: Bool) throws
-    func write(_ value: String) throws
+    func writeString(_ value: String) throws
+    func writeData(_ data: Data)
     func writeEncodable<Value>(_ value: Value) throws where Value: Encodable
 }
+
+extension WriteableBinaryStream {
+    func writeString(_ value: String) throws {
+        guard let encodedString = value.data(using: stringEncoding) else {
+            throw BinaryEncodingError.couldntEncodeString
+        }
+        
+        writeData(encodedString)
+        writeInt(UInt8(0))
+    }
+}
+
 
 protocol WriteableBinaryStreamEncodingAdaptor {
     var stream: WriteableBinaryStream { get }
@@ -27,19 +42,19 @@ extension WriteableBinaryStreamEncodingAdaptor {
     }
     
     mutating func encode(_ value: String) throws {
-        try stream.write(value)
+        try stream.writeString(value)
     }
     
     mutating func encode(_ value: Double) throws {
-        try stream.writeFloat(value)
+        try stream.write(value)
     }
     
     mutating func encode(_ value: Float) throws {
-        try stream.writeFloat(value)
+        try stream.write(value)
     }
 
     mutating func encode(_ value: Float16) throws {
-        try stream.writeFloat(value)
+        try stream.write(value)
     }
 
     mutating func encode(_ value: Int) throws {

@@ -6,18 +6,20 @@
 import Bytes
 import Foundation
 
-public protocol BinaryDecodable: Decodable {
-    init(fromBinary: BinaryDecoder) throws
+public protocol BinaryEncodable: Encodable {
+    func binaryEncode(to encoder: Encoder) throws
 }
 
-public extension BinaryDecodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
-        print("fallback binary decoding for \(Self.self)")
-        
-        try self.init(from: decoder)
+public extension BinaryEncodable {
+    func binaryEncode(to encoder: Encoder) throws {
+        try encode(to: encoder)
     }
 }
 
-public protocol BinaryDecoder: Decoder {
+enum BinaryEncodingError: Error {
+    case couldntEncodeString
+}
+
+public protocol BinaryEncoder: Encoder {
     var stringEncoding: String.Encoding { get }
 }

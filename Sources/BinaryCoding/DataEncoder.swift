@@ -3,30 +3,15 @@
 //  All code (c) 2022 - present day, Elegant Chaos Limited.
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-import Bytes
 import Foundation
 
-public protocol BinaryEncodable: Encodable {
-    func binaryEncode(to encoder: Encoder) throws
-}
-
-public extension BinaryEncodable {
-    func binaryEncode(to encoder: Encoder) throws {
-        try encode(to: encoder)
-    }
-}
-
-enum BinaryEncodingError: Error {
-    case couldntEncodeString
-}
-
-class BinaryEncoder: Encoder, WriteableBinaryStream {
-    var codingPath: [CodingKey]
-    var userInfo: [CodingUserInfoKey : Any]
+public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
+    public var codingPath: [CodingKey]
+    public var userInfo: [CodingUserInfoKey : Any]
     var data: Data
-    var stringEncoding: String.Encoding
+    public var stringEncoding: String.Encoding
 
-    init() {
+    public init() {
         self.codingPath = []
         self.userInfo = [:]
         self.data = Data()
@@ -43,15 +28,19 @@ class BinaryEncoder: Encoder, WriteableBinaryStream {
         data.append(contentsOf: value.littleEndianBytes)
     }
     
-    func writeFloat<Value>(_ value: Value) throws where Value: BinaryFloatingPoint {
+    func write<Value>(_ value: Value) throws where Value: BinaryFloatingPoint {
         data.append(contentsOf: value.littleEndianBytes)
     }
     
     func write(_ value: Bool) throws {
         self.writeInt(UInt8(value ? 1 : 0))
     }
+
+    func writeData(_ data: Data) {
+        self.data.append(contentsOf: data)
+    }
     
-    func write(_ value: String) throws {
+    func writeString(_ value: String) throws {
         guard let encodedString = value.data(using: stringEncoding) else {
             throw BinaryEncodingError.couldntEncodeString
         }
@@ -60,23 +49,29 @@ class BinaryEncoder: Encoder, WriteableBinaryStream {
         data.append(UInt8(0))
     }
     
+    func writeEncodable(_ value: String) throws {
+        try writeString(value)
+    }
+    
     func writeEncodable<Value>(_ value: Value) throws where Value: Encodable {
-        if let binary = value as? BinaryEncodable {
+        if let string = value as? String {
+            try writeString(string)
+        } else if let binary = value as? BinaryEncodable {
             try binary.binaryEncode(to: self)
         } else {
             try value.encode(to: self)
         }
     }
     
-    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+    public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         return KeyedEncodingContainer(KeyedContainer(for: self, path: codingPath))
     }
     
-    func unkeyedContainer() -> UnkeyedEncodingContainer {
+    public func unkeyedContainer() -> UnkeyedEncodingContainer {
         return UnkeyedContainer(for: self)
     }
     
-    func singleValueContainer() -> SingleValueEncodingContainer {
+    public func singleValueContainer() -> SingleValueEncodingContainer {
         return SingleValueContainer(for: self, path: codingPath)
     }
     
@@ -122,15 +117,15 @@ class BinaryEncoder: Encoder, WriteableBinaryStream {
         }
         
         mutating func encode(_ value: String, forKey key: K) throws {
-            try stream.write(value)
+            try stream.writeString(value)
         }
         
         mutating func encode(_ value: Double, forKey key: K) throws {
-            try stream.writeFloat(value)
+            try stream.write(value)
         }
         
         mutating func encode(_ value: Float, forKey key: K) throws {
-            try stream.writeFloat(value)
+            try stream.write(value)
         }
         
         mutating func encode(_ value: Int, forKey key: K) throws {
