@@ -48,7 +48,16 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         return slice
     }
 
-//    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger {
+    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger {
+        var result: [T] = []
+        repeat {
+            let c = try readInt(T.self)
+            result.append(c)
+            if c == until {
+                return result[...]
+            }
+        } while true
+    }
 
     func read(until: Byte)  throws -> ArraySlice<Byte> {
         

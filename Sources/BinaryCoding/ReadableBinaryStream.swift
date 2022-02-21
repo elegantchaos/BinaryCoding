@@ -10,7 +10,7 @@ protocol ReadableBinaryStream {
 
     func read(_ count: Int) throws -> ArraySlice<UInt8>
     func read(until: UInt8)  throws -> ArraySlice<UInt8> // TODO: make this generic for different sized chunks
-//    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger
+    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger
     func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger
     func readFloat<T>(_ type: T.Type) throws -> T where T: BinaryFloatingPoint
     func readString() throws -> String
@@ -22,9 +22,18 @@ protocol ReadableBinaryStream {
 
 extension ReadableBinaryStream {
     func readString() throws -> String {
-        let bytes = try read(until: UInt8(0)) // TODO: fix this for non-byte encodings
-        guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
-        return string
+        switch stringEncoding {
+            case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
+                let length = try readInt(UInt32.self)
+                let data = try read(Int(length))
+                guard let string = String(bytes: data, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
+                return string
+
+            default:
+                let bytes = try read(until: UInt8(0)) // TODO: fix this for non-byte encodings
+                guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
+                return string
+        }
     }
 }
 

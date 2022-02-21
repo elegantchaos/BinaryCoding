@@ -22,8 +22,15 @@ extension WriteableBinaryStream {
             throw BinaryEncodingError.couldntEncodeString
         }
         
-        writeData(encodedString)
-        writeInt(UInt8(0))
+        switch stringEncoding {
+            case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
+                writeInt(UInt32(encodedString.count))
+                writeData(encodedString)
+                
+            default:
+                writeData(encodedString)
+                writeInt(UInt8(0))
+        }
     }
 }
 

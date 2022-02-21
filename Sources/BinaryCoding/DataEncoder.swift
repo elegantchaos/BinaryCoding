@@ -40,15 +40,6 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         self.data.append(contentsOf: data)
     }
     
-    func writeString(_ value: String) throws {
-        guard let encodedString = value.data(using: stringEncoding) else {
-            throw BinaryEncodingError.couldntEncodeString
-        }
-
-        data.append(encodedString)
-        data.append(UInt8(0))
-    }
-    
     func writeEncodable(_ value: String) throws {
         try writeString(value)
     }
