@@ -10,6 +10,9 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     public var stringEncoding: String.Encoding = .utf8
     public var enableLogging: Bool = false
 
+    public var codingPath: [CodingKey]
+    public var userInfo: [CodingUserInfoKey : Any]
+    
     var data: Bytes
     var index: Bytes.Index
 
@@ -55,10 +58,8 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         let slice = data[index..<end]
         index = data.index(end, offsetBy: 1)
         return slice
-    public func pushPath<K>(_ key: K) where K : CodingKey {
-        codingPath.append(key)
     }
-
+    
     public func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
         let bytes = try read(MemoryLayout<T>.size)
         return try T(littleEndianBytes: bytes)
@@ -75,13 +76,17 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     
     public func remainingCount() -> Int {
         data.count - index
+    }
+    
+    public func pushPath<K>(_ key: K) where K : CodingKey {
+        codingPath.append(key)
+    }
+    
+    
     public func popPath() {
         codingPath.removeLast()
     }
     
-    public var codingPath: [CodingKey]
-    
-    public var userInfo: [CodingUserInfoKey : Any]
     
     public  func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         return KeyedDecodingContainer(KeyedContainer(for: self, path: codingPath))
