@@ -12,7 +12,7 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     var data: Bytes
     var index: Bytes.Index
 
-    internal convenience init(data: Data) {
+    public convenience init(data: Data) {
         self.init(bytes: data.littleEndianBytes)
     }
 
@@ -23,7 +23,7 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         self.userInfo = [:]
     }
 
-    func decode<T: Decodable>(_ kind: T.Type) throws -> T {
+    public func decode<T: Decodable>(_ kind: T.Type) throws -> T {
         return try readDecodable(kind)
     }
 
