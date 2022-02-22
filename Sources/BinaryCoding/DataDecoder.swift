@@ -34,8 +34,6 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     public func readDecodable<T: Decodable>(_ kind: T.Type) throws -> T {
         if kind is String.Type {
             return try readString() as! T
-        } else if let unconstrained = kind as? UnboundedDecodable.Type {
-            return try unconstrained.decode(bytes: remainingCount(), from: self) as! T
         } else if let binaryDecodable = kind as? BinaryDecodable.Type {
             return try binaryDecodable.init(fromBinary: self) as! T
         } else {
