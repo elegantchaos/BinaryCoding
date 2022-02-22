@@ -8,6 +8,7 @@ import Foundation
 
 open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     public var stringEncoding: String.Encoding = .utf8
+    public var enableLogging: Bool = false
 
     var data: Bytes
     var index: Bytes.Index
@@ -54,6 +55,8 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         let slice = data[index..<end]
         index = data.index(end, offsetBy: 1)
         return slice
+    public func pushPath<K>(_ key: K) where K : CodingKey {
+        codingPath.append(key)
     }
 
     public func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
@@ -72,6 +75,8 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     
     public func remainingCount() -> Int {
         data.count - index
+    public func popPath() {
+        codingPath.removeLast()
     }
     
     public var codingPath: [CodingKey]
@@ -114,7 +119,11 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         }
         
         func debugKey(_ value: Any, key: K) {
-            print("decoded \(key.stringValue): \(value)")
+            if stream.enableLogging {
+                var path = codingPath
+                path.append(key)
+                print("decoded \(path.compactDescription): \(value)")
+            }
         }
         
         func decode(_ type: Float.Type, forKey key: K) throws -> Float {
@@ -192,7 +201,10 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         }
         
         func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
+            stream.pushPath(key)
             let value = try stream.readDecodable(type)
+            stream.popPath()
+
             debugKey(value, key: key)
             return value
         }

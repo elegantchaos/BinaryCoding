@@ -9,13 +9,16 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
     public var codingPath: [CodingKey]
     public var userInfo: [CodingUserInfoKey : Any]
     public var data: Data
+
     public var stringEncoding: String.Encoding
+    public var enableLogging: Bool
 
     public init() {
         self.codingPath = []
         self.userInfo = [:]
         self.data = Data()
         self.stringEncoding = .utf8
+        self.enableLogging = false
     }
     
     public func encode<T: Encodable>(_ value: T) throws -> Data {
@@ -108,7 +111,11 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         }
         
         func debugKey(_ value: Any, key: K) {
-            print("encoding \(key.stringValue): \(value) to \(codingPath)")
+            if stream.enableLogging {
+                var path = codingPath
+                path.append(key)
+                print("encoding \(path.compactDescription): \(value)")
+            }
         }
 
         mutating func encodeNil(forKey key: K) throws {
