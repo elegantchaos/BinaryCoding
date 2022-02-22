@@ -5,7 +5,7 @@
 
 import Foundation
 
-public protocol ReadableBinaryStream {
+public protocol ReadableBinaryStream: BinaryStream {
     var stringEncoding: String.Encoding { get }
 
     func read(_ count: Int) throws -> ArraySlice<UInt8>
@@ -25,20 +25,15 @@ public extension ReadableBinaryStream {
             case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
                 let length = try readInt(UInt32.self)
                 let data = try read(Int(length))
-                guard let string = String(bytes: data, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
+                guard let string = String(bytes: data, encoding: stringEncoding) else { throw BinaryCodingError.badStringEncoding }
                 return string
 
             default:
                 let bytes = try read(until: UInt8(0)) // TODO: fix this for non-byte encodings
-                guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BasicDecoderError.badStringEncoding }
+                guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BinaryCodingError.badStringEncoding }
                 return string
         }
     }
-}
-
-enum BasicDecoderError: Error {
-    case outOfData
-    case badStringEncoding
 }
 
 protocol ReadableBinaryStreamDecodingAdaptor {

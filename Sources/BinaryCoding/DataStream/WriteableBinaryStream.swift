@@ -5,7 +5,8 @@
 
 import Foundation
 
-public protocol WriteableBinaryStream {
+
+public protocol WriteableBinaryStream: BinaryStream {
     var stringEncoding: String.Encoding { get }
     
     func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger
@@ -15,14 +16,12 @@ public protocol WriteableBinaryStream {
     func writeData(_ data: Data)
     func writeEncodable<Value>(_ value: Value) throws where Value: Encodable
     
-    func pushPath<K>(_ key: K) where K: CodingKey
-    func popPath()
 }
 
 public extension WriteableBinaryStream {
     func writeString(_ value: String) throws {
         guard let encodedString = value.data(using: stringEncoding) else {
-            throw BinaryEncodingError.couldntEncodeString
+            throw BinaryCodingError.badStringEncoding
         }
         
         switch stringEncoding {
