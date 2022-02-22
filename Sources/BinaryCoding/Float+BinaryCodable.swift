@@ -15,7 +15,7 @@ extension Float16: BinaryCodable {
         self = unsafeBitCast(uint16, to: Float16.self)
     }
     
-    public func binaryEncode(to encoder: Encoder) throws {
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.littleEndianBytes)
     }

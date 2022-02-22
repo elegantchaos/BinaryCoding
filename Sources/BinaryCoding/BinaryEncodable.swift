@@ -11,11 +11,11 @@ public protocol BinaryEncoder: Encoder {
 }
 
 public protocol BinaryEncodable: Encodable {
-    func binaryEncode(to encoder: Encoder) throws
+    func binaryEncode(to encoder: BinaryEncoder) throws
 }
 
 public extension BinaryEncodable {
-    func binaryEncode(to encoder: Encoder) throws {
+    func binaryEncode(to encoder: BinaryEncoder) throws {
         try encode(to: encoder)
     }
 }

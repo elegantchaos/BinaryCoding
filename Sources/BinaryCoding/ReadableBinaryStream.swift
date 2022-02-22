@@ -9,8 +9,7 @@ protocol ReadableBinaryStream {
     var stringEncoding: String.Encoding { get }
 
     func read(_ count: Int) throws -> ArraySlice<UInt8>
-    func read(until: UInt8)  throws -> ArraySlice<UInt8> // TODO: make this generic for different sized chunks
-    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger
+    func read(until: UInt8)  throws -> ArraySlice<UInt8>
     func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger
     func readFloat<T>(_ type: T.Type) throws -> T where T: BinaryFloatingPoint
     func readString() throws -> String

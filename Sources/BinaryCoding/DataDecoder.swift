@@ -48,22 +48,11 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         return slice
     }
 
-    func read<T>(until: T)  throws -> ArraySlice<T> where T: FixedWidthInteger {
-        var result: [T] = []
-        repeat {
-            let c = try readInt(T.self)
-            result.append(c)
-            if c == until {
-                return result[...]
-            }
-        } while true
-    }
-
     func read(until: Byte)  throws -> ArraySlice<Byte> {
         
         guard let end = data[index...].firstIndex(of: until) else { throw BasicDecoderError.outOfData }
         let slice = data[index..<end]
-        index = end
+        index = data.index(end, offsetBy: 1)
         return slice
     }
 
@@ -124,63 +113,88 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
             return false // we can't know if the optional value is present, we have to assume that it is
         }
         
+        func debugKey(_ value: Any, key: K) {
+            print("decoded \(key.stringValue): \(value)")
+        }
+        
         func decode(_ type: Float.Type, forKey key: K) throws -> Float {
             let bytes = try stream.read(MemoryLayout<Float>.size)
             let raw = try UInt32(littleEndianBytes: bytes)
-            return Float(bitPattern: raw)
+            let value = Float(bitPattern: raw)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: Int.Type, forKey key: K) throws -> Int {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: Int8.Type, forKey key: K) throws -> Int8 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: Int16.Type, forKey key: K) throws -> Int16 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: Int32.Type, forKey key: K) throws -> Int32 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: Int64.Type, forKey key: K) throws -> Int64 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: UInt.Type, forKey key: K) throws -> UInt {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: UInt8.Type, forKey key: K) throws -> UInt8 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: UInt16.Type, forKey key: K) throws -> UInt16 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: UInt32.Type, forKey key: K) throws -> UInt32 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: UInt64.Type, forKey key: K) throws -> UInt64 {
-            return try stream.readInt(type)
+            let value = try stream.readInt(type)
+            debugKey(value, key: key)
+            return value
         }
 
         func decode(_ type: String.Type, forKey key: K) throws -> String {
-            return try stream.readString()
+            let value = try stream.readString()
+            debugKey(value, key: key)
+            return value
         }
         
         func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
-            return try stream.readDecodable(type)
-//            if let unconstrained = type as? UnboundedDecodable.Type {
-//                return try unconstrained.decode(bytes: decoder.remainingCount(), from: decoder) as! T
-//            }
-//
-//            return try T(from: decoder)
+            let value = try stream.readDecodable(type)
+            debugKey(value, key: key)
+            return value
         }
         
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {

@@ -54,6 +54,14 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         }
     }
     
+    func pushPath<K>(_ key: K) where K : CodingKey {
+        codingPath.append(key)
+    }
+    
+    func popPath() {
+        codingPath.removeLast()
+    }
+    
     public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         return KeyedEncodingContainer(KeyedContainer(for: self, path: codingPath))
     }
@@ -99,68 +107,89 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
             self.codingPath = codingPath
         }
         
+        func debugKey(_ value: Any, key: K) {
+            print("encoding \(key.stringValue): \(value) to \(codingPath)")
+        }
+
         mutating func encodeNil(forKey key: K) throws {
             fatalError("to do")
         }
         
         mutating func encode(_ value: Bool, forKey key: K) throws {
+            debugKey(value, key: key)
             try stream.write(value)
         }
         
         mutating func encode(_ value: String, forKey key: K) throws {
+            debugKey(value, key: key)
             try stream.writeString(value)
         }
         
         mutating func encode(_ value: Double, forKey key: K) throws {
+            debugKey(value, key: key)
             try stream.write(value)
         }
         
         mutating func encode(_ value: Float, forKey key: K) throws {
+            debugKey(value, key: key)
             try stream.write(value)
         }
         
         mutating func encode(_ value: Int, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: Int8, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: Int16, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: Int32, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: Int64, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: UInt, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: UInt8, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: UInt16, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: UInt32, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode(_ value: UInt64, forKey key: K) throws {
+            debugKey(value, key: key)
             stream.writeInt(value)
         }
         
         mutating func encode<T>(_ value: T, forKey key: K) throws where T : Encodable {
+            debugKey(value, key: key)
+            stream.pushPath(key)
             try stream.writeEncodable(value)
+            stream.popPath()
         }
         
         mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: K) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {

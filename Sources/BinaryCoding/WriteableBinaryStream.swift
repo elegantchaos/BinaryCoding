@@ -14,6 +14,9 @@ protocol WriteableBinaryStream {
     func writeString(_ value: String) throws
     func writeData(_ data: Data)
     func writeEncodable<Value>(_ value: Value) throws where Value: Encodable
+    
+    func pushPath<K>(_ key: K) where K: CodingKey
+    func popPath()
 }
 
 extension WriteableBinaryStream {
