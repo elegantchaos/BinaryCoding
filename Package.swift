@@ -19,7 +19,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/elegantchaos/Bytes.git", .branch("float-support")),
-        .package(url: "https://github.com/elegantchaos/XCTestExtensions.git", from: "1.4.3")
+        .package(url: "https://github.com/elegantchaos/XCTestExtensions.git", from: "1.4.4")
     ],
     targets: [
         .target(
