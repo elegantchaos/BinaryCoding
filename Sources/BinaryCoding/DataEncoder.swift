@@ -8,7 +8,7 @@ import Foundation
 public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
     public var codingPath: [CodingKey]
     public var userInfo: [CodingUserInfoKey : Any]
-    var data: Data
+    public var data: Data
     public var stringEncoding: String.Encoding
 
     public init() {
@@ -18,25 +18,25 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         self.stringEncoding = .utf8
     }
     
-    func encode<T: Encodable>(_ value: T) throws -> Data {
+    public func encode<T: Encodable>(_ value: T) throws -> Data {
         data.removeAll()
         try writeEncodable(value)
         return data
     }
     
-    func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger {
+    public func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger {
         data.append(contentsOf: value.littleEndianBytes)
     }
     
-    func write<Value>(_ value: Value) throws where Value: BinaryFloatingPoint {
+    public func writeFloat<Value>(_ value: Value) throws where Value: BinaryFloatingPoint {
         data.append(contentsOf: value.littleEndianBytes)
     }
     
-    func write(_ value: Bool) throws {
+    public func write(_ value: Bool) throws {
         self.writeInt(UInt8(value ? 1 : 0))
     }
 
-    func writeData(_ data: Data) {
+    public func writeData(_ data: Data) {
         self.data.append(contentsOf: data)
     }
     
@@ -44,7 +44,7 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         try writeString(value)
     }
     
-    func writeEncodable<Value>(_ value: Value) throws where Value: Encodable {
+    public func writeEncodable<Value>(_ value: Value) throws where Value: Encodable {
         if let string = value as? String {
             try writeString(string)
         } else if let binary = value as? BinaryEncodable {
@@ -54,11 +54,11 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         }
     }
     
-    func pushPath<K>(_ key: K) where K : CodingKey {
+    public func pushPath<K>(_ key: K) where K : CodingKey {
         codingPath.append(key)
     }
     
-    func popPath() {
+    public func popPath() {
         codingPath.removeLast()
     }
     
@@ -127,12 +127,12 @@ public class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         
         mutating func encode(_ value: Double, forKey key: K) throws {
             debugKey(value, key: key)
-            try stream.write(value)
+            try stream.writeFloat(value)
         }
         
         mutating func encode(_ value: Float, forKey key: K) throws {
             debugKey(value, key: key)
-            try stream.write(value)
+            try stream.writeFloat(value)
         }
         
         mutating func encode(_ value: Int, forKey key: K) throws {

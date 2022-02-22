@@ -6,7 +6,7 @@
 import Bytes
 import Foundation
 
-public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
+open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     public var stringEncoding: String.Encoding = .utf8
 
     var data: Bytes
@@ -27,7 +27,7 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         return try readDecodable(kind)
     }
 
-    func readDecodable<T: Decodable>(_ kind: T.Type) throws -> T {
+    public func readDecodable<T: Decodable>(_ kind: T.Type) throws -> T {
         if kind is String.Type {
             return try readString() as! T
         } else if let unconstrained = kind as? UnboundedDecodable.Type {
@@ -39,7 +39,7 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         }
     }
 
-    func read(_ count: Int) throws -> ArraySlice<Byte> {
+    public func read(_ count: Int) throws -> ArraySlice<Byte> {
         let end = index.advanced(by: count)
         guard end <= data.endIndex else { throw BasicDecoderError.outOfData }
 
@@ -48,7 +48,7 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         return slice
     }
 
-    func read(until: Byte)  throws -> ArraySlice<Byte> {
+    public func read(until: Byte)  throws -> ArraySlice<Byte> {
         
         guard let end = data[index...].firstIndex(of: until) else { throw BasicDecoderError.outOfData }
         let slice = data[index..<end]
@@ -56,21 +56,21 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         return slice
     }
 
-    func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
+    public func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
         let bytes = try read(MemoryLayout<T>.size)
         return try T(littleEndianBytes: bytes)
     }
 
-    func readFloat<T>(_ type: T.Type) throws -> T where T: BinaryFloatingPoint {
+    public func readFloat<T>(_ type: T.Type) throws -> T where T: BinaryFloatingPoint {
         let bytes = try read(MemoryLayout<T>.size)
         return try T(littleEndianBytes: bytes)
     }
     
-    func readAll() -> ArraySlice<Byte> {
+    public func readAll() -> ArraySlice<Byte> {
         return data[index...]
     }
     
-    func remainingCount() -> Int {
+    public func remainingCount() -> Int {
         data.count - index
     }
     
@@ -248,7 +248,7 @@ public class DataDecoder: BinaryDecoder, ReadableBinaryStream {
 
 
 
-extension UnkeyedDecodingContainer {
+public extension UnkeyedDecodingContainer {
     mutating func decodeArray<T, C>(of type: T.Type, count: C) throws -> [T] where T: Decodable, C: FixedWidthInteger {
         var result: [T] = []
         result.reserveCapacity(Int(count))

@@ -5,11 +5,11 @@
 
 import Foundation
 
-protocol WriteableBinaryStream {
+public protocol WriteableBinaryStream {
     var stringEncoding: String.Encoding { get }
     
     func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger
-    func write<Value>(_ value: Value) throws where Value: BinaryFloatingPoint
+    func writeFloat<Value>(_ value: Value) throws where Value: BinaryFloatingPoint
     func write(_ value: Bool) throws
     func writeString(_ value: String) throws
     func writeData(_ data: Data)
@@ -19,7 +19,7 @@ protocol WriteableBinaryStream {
     func popPath()
 }
 
-extension WriteableBinaryStream {
+public extension WriteableBinaryStream {
     func writeString(_ value: String) throws {
         guard let encodedString = value.data(using: stringEncoding) else {
             throw BinaryEncodingError.couldntEncodeString
@@ -56,15 +56,15 @@ extension WriteableBinaryStreamEncodingAdaptor {
     }
     
     mutating func encode(_ value: Double) throws {
-        try stream.write(value)
+        try stream.writeFloat(value)
     }
     
     mutating func encode(_ value: Float) throws {
-        try stream.write(value)
+        try stream.writeFloat(value)
     }
 
     mutating func encode(_ value: Float16) throws {
-        try stream.write(value)
+        try stream.writeFloat(value)
     }
 
     mutating func encode(_ value: Int) throws {

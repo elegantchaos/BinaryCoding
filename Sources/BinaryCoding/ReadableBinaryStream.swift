@@ -5,7 +5,7 @@
 
 import Foundation
 
-protocol ReadableBinaryStream {
+public protocol ReadableBinaryStream {
     var stringEncoding: String.Encoding { get }
 
     func read(_ count: Int) throws -> ArraySlice<UInt8>
@@ -19,7 +19,7 @@ protocol ReadableBinaryStream {
 }
 
 
-extension ReadableBinaryStream {
+public extension ReadableBinaryStream {
     func readString() throws -> String {
         switch stringEncoding {
             case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
