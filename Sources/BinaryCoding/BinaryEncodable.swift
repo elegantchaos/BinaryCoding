@@ -19,7 +19,3 @@ public extension BinaryEncodable {
         try encode(to: encoder)
     }
 }
-
-enum BinaryEncodingError: Error {
-    case couldntEncodeString
-}

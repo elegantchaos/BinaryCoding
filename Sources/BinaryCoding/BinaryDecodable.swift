@@ -8,6 +8,7 @@ import Foundation
 
 public protocol BinaryDecoder: Decoder {
     var stringEncoding: String.Encoding { get }
+    var enableLogging: Bool { get }
 }
 
 public protocol BinaryDecodable: Decodable {
@@ -16,7 +17,9 @@ public protocol BinaryDecodable: Decodable {
 
 public extension BinaryDecodable {
     init(fromBinary decoder: BinaryDecoder) throws {
-        print("fallback binary decoding for \(Self.self)")
+        if decoder.enableLogging {
+            print("fallback binary decoding for \(Self.self)")
+        }
         
         try self.init(from: decoder)
     }
