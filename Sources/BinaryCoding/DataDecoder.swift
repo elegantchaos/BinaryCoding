@@ -76,16 +76,6 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         data.count - index
     }
     
-    public func pushPath<K>(_ key: K) where K : CodingKey {
-        codingPath.append(key)
-    }
-    
-    
-    public func popPath() {
-        codingPath.removeLast()
-    }
-    
-    
     public  func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         return KeyedDecodingContainer(KeyedContainer(for: self, path: codingPath))
     }
@@ -102,7 +92,7 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
         typealias Key = K
         
         var codingPath: [CodingKey]
-        let stream: ReadableBinaryStream
+        var stream: ReadableBinaryStream
         
         init(for stream: ReadableBinaryStream, path: [CodingKey]) {
             self.stream = stream
@@ -121,85 +111,77 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
             return false // we can't know if the optional value is present, we have to assume that it is
         }
         
-        func debugKey(_ value: Any, key: K) {
-            if stream.enableLogging {
-                var path = codingPath
-                path.append(key)
-                print("decoded \(path.compactDescription): \(value)")
-            }
-        }
-        
         func decode(_ type: Float.Type, forKey key: K) throws -> Float {
             let bytes = try stream.read(MemoryLayout<Float>.size)
             let raw = try UInt32(littleEndianBytes: bytes)
             let value = Float(bitPattern: raw)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: Int.Type, forKey key: K) throws -> Int {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: Int8.Type, forKey key: K) throws -> Int8 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: Int16.Type, forKey key: K) throws -> Int16 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: Int32.Type, forKey key: K) throws -> Int32 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: Int64.Type, forKey key: K) throws -> Int64 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: UInt.Type, forKey key: K) throws -> UInt {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: UInt8.Type, forKey key: K) throws -> UInt8 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: UInt16.Type, forKey key: K) throws -> UInt16 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: UInt32.Type, forKey key: K) throws -> UInt32 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: UInt64.Type, forKey key: K) throws -> UInt64 {
             let value = try stream.readInt(type)
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
 
         func decode(_ type: String.Type, forKey key: K) throws -> String {
             let value = try stream.readString()
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
         
@@ -208,7 +190,7 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
             let value = try stream.readDecodable(type)
             stream.popPath()
 
-            debugKey(value, key: key)
+            stream.debugKey(value, key: key)
             return value
         }
         
