@@ -43,7 +43,9 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
 
     public func read(_ count: Int) throws -> ArraySlice<Byte> {
         let end = index.advanced(by: count)
-        guard end <= data.endIndex else { throw BinaryCodingError.outOfData }
+        guard end <= data.endIndex else {
+            throw DecodingError.dataCorrupted(.init(codingPath: codingPath, debugDescription: "Out of data. Trying to read \(count) bytes, only have \(end - data.endIndex)."))
+        }
 
         let slice = data[index..<end]
         index = end
@@ -52,7 +54,10 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
 
     public func read(until: Byte)  throws -> ArraySlice<Byte> {
         
-        guard let end = data[index...].firstIndex(of: until) else { throw BinaryCodingError.outOfData }
+        guard let end = data[index...].firstIndex(of: until) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: codingPath, debugDescription: "Looking for a byte with value \(until), but run out of data."))
+            
+        }
         let slice = data[index..<end]
         index = data.index(end, offsetBy: 1)
         return slice

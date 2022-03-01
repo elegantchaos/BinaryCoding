@@ -6,7 +6,6 @@
 import Foundation
 
 public enum BinaryCodingError: Error {
-    case outOfData
     case badStringEncoding
 }
 
