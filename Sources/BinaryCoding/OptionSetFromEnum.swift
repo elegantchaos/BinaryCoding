@@ -8,7 +8,7 @@ import Foundation
 public protocol EnumForOptionSet: Codable, CaseIterable, Equatable, RawRepresentable where RawValue == String {
 }
 
-public protocol OptionSetFromEnum: OptionSet, BinaryCodable where Options.AllCases.Index: FixedWidthInteger, RawValue: FixedWidthInteger, RawValue: BinaryCodable {
+public protocol OptionSetFromEnum: OptionSet, BinaryCodable, CustomStringConvertible where Options.AllCases.Index: FixedWidthInteger, RawValue: FixedWidthInteger, RawValue: BinaryCodable {
     associatedtype Options: EnumForOptionSet
     init(arrayLiteral elements: Options...)
     init(from decoder: Decoder) throws
@@ -61,6 +61,20 @@ public extension OptionSetFromEnum {
         }
     }
     
+    var options: [Options] {
+        
+        var result: [Options] = []
+
+        var mask = RawValue(1)
+        for flag in Options.allCases {
+            if (rawValue & mask) != 0 {
+                result.append(flag)
+            }
+            mask = mask << 1
+        }
+        return result
+    }
+    
     init(fromBinary decoder: BinaryDecoder) throws {
         let container = try decoder.singleValueContainer()
         try self.init(rawValue: container.decode(RawValue.self))
@@ -80,6 +94,10 @@ public extension OptionSetFromEnum {
             index = index << 1
         }
         return false
+    }
+    
+    var description: String {
+        return self.options.map({ $0.rawValue }).joined(separator: ", ")
     }
 }
 
