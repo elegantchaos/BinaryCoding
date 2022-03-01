@@ -70,4 +70,28 @@ public extension OptionSetFromEnum {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }
+    
+    func contains2(_ option: Options) -> Bool {
+        var index = RawValue(1)
+        for flag in Options.allCases {
+            if flag == option {
+                return (rawValue & index) != 0
+            }
+            index = index << 1
+        }
+        return false
+    }
+}
+
+extension OptionSetFromEnum {
+    func contains(_ members: Set<Options>) -> Bool where Options: Hashable {
+        var index = RawValue(1)
+        for flag in Options.allCases {
+            if members.contains(flag) {
+                return (rawValue & index) != 0
+            }
+            index = index << 1
+        }
+        return false
+    }
 }
