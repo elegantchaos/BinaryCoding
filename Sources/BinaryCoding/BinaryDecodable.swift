@@ -9,6 +9,18 @@ import Foundation
 public protocol BinaryDecoder: Decoder {
     var stringEncoding: String.Encoding { get }
     var enableLogging: Bool { get }
+    func decode<T: Decodable>(_ type: T.Type) throws -> T
+}
+
+public extension BinaryDecoder {
+    func decodeArray<T: Decodable>(of type: T.Type, count: Int) throws -> [T] {
+        var results: [T] = []
+        results.reserveCapacity(count)
+        for _ in 0..<count {
+            results.append(try decode(type))
+        }
+        return results
+    }
 }
 
 public protocol BinaryDecodable: Decodable {
