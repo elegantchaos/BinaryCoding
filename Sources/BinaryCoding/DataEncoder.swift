@@ -6,6 +6,18 @@
 import Foundation
 
 open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
+    public struct Patch {
+        let location: Data.Index
+        let encoder: DataEncoder
+        
+        public func resolve<Value>(_ value: Value) where Value: FixedWidthInteger {
+            let bytes = value.littleEndianBytes
+            for n in 0..<bytes.count {
+                encoder.data[location+n] = bytes[n]
+            }
+        }
+    }
+    
     public var codingPath: [CodingKey]
     public var userInfo: [CodingUserInfoKey : Any]
     public var data: Data
@@ -27,11 +39,8 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         return data
     }
 
-    public func patch<Value>(_ value: Value, at offset: Int) where Value: FixedWidthInteger {
-        let bytes = value.littleEndianBytes
-        for n in 0..<bytes.count {
-            data[offset+n] = bytes[n]
-        }
+    public func getPatch(offset: Int = 0) -> Patch {
+        return Patch(location: data.count + offset, encoder: self)
     }
     
     public func appendEncoded<T: Encodable>(_ value: T) throws {
