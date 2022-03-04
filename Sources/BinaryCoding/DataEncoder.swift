@@ -27,6 +27,13 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         return data
     }
 
+    public func patch<Value>(_ value: Value, at offset: Int) where Value: FixedWidthInteger {
+        let bytes = value.littleEndianBytes
+        for n in 0..<bytes.count {
+            data[offset+n] = bytes[n]
+        }
+    }
+    
     public func appendEncoded<T: Encodable>(_ value: T) throws {
         try writeEncodable(value)
     }
