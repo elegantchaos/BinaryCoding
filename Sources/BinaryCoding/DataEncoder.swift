@@ -26,6 +26,16 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         try writeEncodable(value)
         return data
     }
+
+    public func appendEncoded<T: Encodable>(_ value: T) throws {
+        try writeEncodable(value)
+    }
+
+    public func appendEmpty(size: Int) {
+        for _ in 0..<size {
+            data.append(UInt8(0))
+        }
+    }
     
     public func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger {
         data.append(contentsOf: value.littleEndianBytes)
