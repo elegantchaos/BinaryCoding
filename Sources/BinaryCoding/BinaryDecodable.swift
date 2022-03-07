@@ -24,7 +24,7 @@ public extension BinaryDecoder {
 }
 
 public protocol BinaryDecodable: Decodable {
-    init(fromBinary: BinaryDecoder) throws
+    init(fromBinary decoder: BinaryDecoder) throws
 }
 
 public extension BinaryDecodable {
