@@ -7,7 +7,7 @@ import Bytes
 import Foundation
 
 open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
-    public var stringEncoding: String.Encoding = .utf8
+    public var stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringDecodingPolicy(encoding: .utf8)
     public var enableLogging: Bool = false
 
     public var codingPath: [CodingKey]
@@ -32,9 +32,7 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     }
 
     public func readDecodable<T: Decodable>(_ kind: T.Type) throws -> T {
-        if kind is String.Type {
-            return try readString() as! T
-        } else if let binaryDecodable = kind as? BinaryDecodable.Type {
+        if let binaryDecodable = kind as? BinaryDecodable.Type {
             return try binaryDecodable.init(fromBinary: self) as! T
         } else {
             return try T(from: self)
@@ -184,12 +182,6 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
             return value
         }
 
-        func decode(_ type: String.Type, forKey key: K) throws -> String {
-            let value = try stream.readString()
-            stream.debugKey(value, key: key)
-            return value
-        }
-        
         func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
             stream.pushPath(key)
             let value = try stream.readDecodable(type)

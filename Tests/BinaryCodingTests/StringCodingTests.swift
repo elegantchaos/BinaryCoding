@@ -70,7 +70,7 @@ final class StringCodingTests: XCTestCase {
         let data = Data([0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
         let decoder = DataDecoder(data: data)
 
-        decoder.stringEncoding = .utf16
+        decoder.stringDecodingPolicy = LengthStringDecodingPolicy(encoding: .utf16)
         
         XCTAssertEqual(try decoder.decode(String.self), "Test")
 
@@ -79,7 +79,7 @@ final class StringCodingTests: XCTestCase {
     func testDecodeCompoundStringUTF16() throws {
         let data = Data([0x12, 0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
         let decoder = DataDecoder(data: data)
-        decoder.stringEncoding = .utf16
+        decoder.stringDecodingPolicy = LengthStringDecodingPolicy(encoding: .utf16)
         
         XCTAssertEqual(try decoder.decode(Compound.self), Compound(string: "Test"))
     }

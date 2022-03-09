@@ -6,35 +6,15 @@
 import Foundation
 
 public protocol ReadableBinaryStream: BinaryStream {
-    var stringEncoding: String.Encoding { get }
-
     func read(_ count: Int) throws -> ArraySlice<UInt8>
     func read(until: UInt8)  throws -> ArraySlice<UInt8>
     func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger
     func readFloat<T>(_ type: T.Type) throws -> T where T: BinaryFloatingPoint
-    func readString() throws -> String
     func readAll() -> ArraySlice<UInt8>
     func remainingCount() -> Int
     func readDecodable<T>(_ type: T.Type) throws -> T where T: Decodable
 }
 
-
-public extension ReadableBinaryStream {
-    func readString() throws -> String {
-        switch stringEncoding {
-            case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
-                let length = try readInt(UInt32.self)
-                let data = try read(Int(length))
-                guard let string = String(bytes: data, encoding: stringEncoding) else { throw BinaryCodingError.badStringEncoding }
-                return string
-
-            default:
-                let bytes = try read(until: UInt8(0)) // TODO: fix this for non-byte encodings
-                guard let string = String(bytes: bytes, encoding: stringEncoding) else { throw BinaryCodingError.badStringEncoding }
-                return string
-        }
-    }
-}
 
 protocol ReadableBinaryStreamDecodingAdaptor {
     var stream: ReadableBinaryStream { get }
@@ -43,10 +23,6 @@ protocol ReadableBinaryStreamDecodingAdaptor {
 extension ReadableBinaryStreamDecodingAdaptor {
     func decodeNil() -> Bool {
         fatalError("to do")
-    }
-    
-    func decode(_ type: String.Type) throws -> String {
-        return try stream.readString()
     }
     
     func decode(_ type: Bool.Type) throws -> Bool {
