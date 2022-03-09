@@ -6,40 +6,6 @@
 import Bytes
 import Foundation
 
-public protocol StringDecodingPolicy {
-    func decodeString(with decoder: BinaryDecoder) throws -> String
-}
-
-public struct ZeroTerminatedStringDecodingPolicy: StringDecodingPolicy {
-    let encoding: String.Encoding
-    
-    public func decodeString(with decoder: BinaryDecoder) throws -> String {
-        var bytes: [UInt8] = []
-        while let byte = try? decoder.decode(UInt8.self), byte != 0 {
-            bytes.append(byte)
-        }
-        
-        guard let string = String(bytes: bytes, encoding: encoding) else {
-            throw BinaryCodingError.badStringEncoding
-        }
-        
-        return string
-    }
-}
-
-public struct LengthStringDecodingPolicy: StringDecodingPolicy {
-    let encoding: String.Encoding
-    
-    public func decodeString(with decoder: BinaryDecoder) throws -> String {
-        let length = try decoder.decode(UInt32.self)
-        let data = try decoder.decodeArray(of: UInt8.self, count: Int(length))
-        guard let string = String(bytes: data, encoding: encoding) else {
-            throw BinaryCodingError.badStringEncoding
-        }
-        
-        return string
-    }
-}
 
 public protocol BinaryDecoder: Decoder {
     var stringDecodingPolicy: StringDecodingPolicy { get }

@@ -7,35 +7,13 @@ import Foundation
 
 
 public protocol WriteableBinaryStream: BinaryStream {
-    var stringEncoding: String.Encoding { get }
-    
     func writeInt<Value>(_ value: Value) where Value: FixedWidthInteger
     func writeFloat<Value>(_ value: Value) throws where Value: BinaryFloatingPoint
     func write(_ value: Bool) throws
-    func writeString(_ value: String) throws
     func writeData(_ data: Data)
     func writeEncodable<Value>(_ value: Value) throws where Value: Encodable
     
 }
-
-public extension WriteableBinaryStream {
-    func writeString(_ value: String) throws {
-        guard let encodedString = value.data(using: stringEncoding) else {
-            throw BinaryCodingError.badStringEncoding
-        }
-        
-        switch stringEncoding {
-            case .utf16, .utf16BigEndian, .utf16LittleEndian, .utf32, .utf32BigEndian, .utf32LittleEndian:
-                writeInt(UInt32(encodedString.count))
-                writeData(encodedString)
-                
-            default:
-                writeData(encodedString)
-                writeInt(UInt8(0))
-        }
-    }
-}
-
 
 protocol WriteableBinaryStreamEncodingAdaptor {
     var stream: WriteableBinaryStream { get }
@@ -48,10 +26,6 @@ extension WriteableBinaryStreamEncodingAdaptor {
     
     mutating func encode(_ value: Bool) throws {
         fatalError("to do")
-    }
-    
-    mutating func encode(_ value: String) throws {
-        try stream.writeString(value)
     }
     
     mutating func encode(_ value: Double) throws {

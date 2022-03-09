@@ -7,7 +7,7 @@ import Bytes
 import Foundation
 
 open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
-    public var stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringDecodingPolicy(encoding: .utf8)
+    public let stringDecodingPolicy: StringDecodingPolicy
     public var enableLogging: Bool = false
 
     public var codingPath: [CodingKey]
@@ -16,12 +16,13 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     var data: Bytes
     var index: Bytes.Index
 
-    public convenience init(data: Data) {
-        self.init(bytes: data.littleEndianBytes)
+    public convenience init(data: Data, stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
+        self.init(bytes: data.littleEndianBytes, stringDecodingPolicy: stringDecodingPolicy)
     }
 
-    public init(bytes: Bytes) {
+    public init(bytes: Bytes, stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
         self.data = bytes
+        self.stringDecodingPolicy = stringDecodingPolicy
         self.index = bytes.startIndex
         self.codingPath = []
         self.userInfo = [:]

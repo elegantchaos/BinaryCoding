@@ -11,12 +11,6 @@ extension String: BinaryCodable {
     }
     
     public func binaryEncode(to encoder: BinaryEncoder) throws {
-        var container = encoder.unkeyedContainer()
-        guard let bytes = data(using: encoder.stringEncoding) else {
-            throw EncodingError.invalidValue(self, .init(codingPath: encoder.codingPath, debugDescription: "Couldn't encode \(self) as \(encoder.stringEncoding)"))
-        }
-
-        try container.encode(bytes)
-        try container.encode(UInt8(0))
+        try encoder.stringEncodingPolicy.encodeString(self, to: encoder)
     }
 }

@@ -7,7 +7,7 @@ import Bytes
 import Foundation
 
 public protocol BinaryEncoder: Encoder {
-    var stringEncoding: String.Encoding { get }
+    var stringEncodingPolicy: StringEncodingPolicy { get }
 }
 
 public protocol BinaryEncodable: Encodable {

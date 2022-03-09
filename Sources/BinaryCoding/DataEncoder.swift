@@ -22,14 +22,14 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
     public var userInfo: [CodingUserInfoKey : Any]
     public var data: Data
 
-    public var stringEncoding: String.Encoding
+    public var stringEncodingPolicy: StringEncodingPolicy
     public var enableLogging: Bool
 
-    public init() {
+    public init(stringEncodingPolicy: StringEncodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
         self.codingPath = []
         self.userInfo = [:]
         self.data = Data()
-        self.stringEncoding = .utf8
+        self.stringEncodingPolicy = stringEncodingPolicy
         self.enableLogging = false
     }
     
@@ -69,14 +69,8 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         self.data.append(contentsOf: data)
     }
     
-    func writeEncodable(_ value: String) throws {
-        try writeString(value)
-    }
-    
     public func writeEncodable<Value>(_ value: Value) throws where Value: Encodable {
-        if let string = value as? String {
-            try writeString(string)
-        } else if let binary = value as? BinaryEncodable {
+        if let binary = value as? BinaryEncodable {
             try binary.binaryEncode(to: self)
         } else {
             try value.encode(to: self)
@@ -135,11 +129,6 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
         mutating func encode(_ value: Bool, forKey key: K) throws {
             stream.debugKey(value, key: key)
             try stream.write(value)
-        }
-        
-        mutating func encode(_ value: String, forKey key: K) throws {
-            stream.debugKey(value, key: key)
-            try stream.writeString(value)
         }
         
         mutating func encode(_ value: Double, forKey key: K) throws {
