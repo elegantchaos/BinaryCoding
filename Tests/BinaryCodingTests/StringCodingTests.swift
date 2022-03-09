@@ -27,7 +27,7 @@ final class StringCodingTests: XCTestCase {
     }
 
     func testEncodeStringUTF16() throws {
-        let encoder = DataEncoder(stringEncodingPolicy: LengthStringCodingPolicy(encoding: .utf16))
+        let encoder = DataEncoder(stringEncodingPolicy: LengthStringCoder(encoding: .utf16))
         
         let expected = Data([0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
         XCTAssertEqual(try encoder.encode("Test"), expected)
@@ -42,7 +42,7 @@ final class StringCodingTests: XCTestCase {
     }
 
     func testEncodeCompoundStringUTF16() throws {
-        let encoder = DataEncoder(stringEncodingPolicy: LengthStringCodingPolicy(encoding: .utf16))
+        let encoder = DataEncoder(stringEncodingPolicy: LengthStringCoder(encoding: .utf16))
 
         let expected = Data([0x12, 0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
         XCTAssertEqual(try encoder.encode(Compound(string: "Test")), expected)
@@ -66,7 +66,7 @@ final class StringCodingTests: XCTestCase {
 
     func testDecodeStringUTF16() throws {
         let data = Data([0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
-        let decoder = DataDecoder(data: data, stringDecodingPolicy: LengthStringCodingPolicy(encoding: .utf16))
+        let decoder = DataDecoder(data: data, stringDecodingPolicy: LengthStringCoder(encoding: .utf16))
         
         XCTAssertEqual(try decoder.decode(String.self), "Test")
 
@@ -74,7 +74,7 @@ final class StringCodingTests: XCTestCase {
 
     func testDecodeCompoundStringUTF16() throws {
         let data = Data([0x12, 0x0A, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0x54, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00])
-        let decoder = DataDecoder(data: data, stringDecodingPolicy: LengthStringCodingPolicy(encoding: .utf16))
+        let decoder = DataDecoder(data: data, stringDecodingPolicy: LengthStringCoder(encoding: .utf16))
         
         XCTAssertEqual(try decoder.decode(Compound.self), Compound(string: "Test"))
     }

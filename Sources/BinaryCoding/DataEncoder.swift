@@ -25,7 +25,7 @@ open class DataEncoder: BinaryEncoder, WriteableBinaryStream {
     public var stringEncodingPolicy: StringEncodingPolicy
     public var enableLogging: Bool
 
-    public init(stringEncodingPolicy: StringEncodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
+    public init(stringEncodingPolicy: StringEncodingPolicy = ZeroTerminatedStringCoder.defaultInstance) {
         self.codingPath = []
         self.userInfo = [:]
         self.data = Data()

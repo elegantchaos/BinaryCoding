@@ -16,13 +16,13 @@ open class DataDecoder: BinaryDecoder, ReadableBinaryStream {
     var data: Bytes
     var index: Bytes.Index
 
-    public convenience init(data: Data, stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
+    public convenience init(data: Data, stringDecodingPolicy: StringDecodingPolicy? = nil) {
         self.init(bytes: data.littleEndianBytes, stringDecodingPolicy: stringDecodingPolicy)
     }
 
-    public init(bytes: Bytes, stringDecodingPolicy: StringDecodingPolicy = ZeroTerminatedStringCodingPolicy(encoding: .utf8)) {
+    public init(bytes: Bytes, stringDecodingPolicy: StringDecodingPolicy? = nil) {
         self.data = bytes
-        self.stringDecodingPolicy = stringDecodingPolicy
+        self.stringDecodingPolicy = stringDecodingPolicy ?? ZeroTerminatedStringCoder.defaultInstance
         self.index = bytes.startIndex
         self.codingPath = []
         self.userInfo = [:]
