@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Test BinaryCoding",
+            "program": "${workspaceFolder:BinaryCoding}/.build/debug/BinaryCodingPackageTests.xctest",
+            "cwd": "${workspaceFolder:BinaryCoding}",
+            "preLaunchTask": "swift: Build All"
+        }
+    ]
+}

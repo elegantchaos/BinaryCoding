@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "swift",
+			"command": "swift",
+			"args": [
+				"build",
+				"--build-tests",
+				"--enable-test-discovery"
+			],
+			"cwd": "/mnt/c/Users/sam/Documents/Projects/BinaryCoding",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "swift: Build All",
+			"detail": "swift build --build-tests --enable-test-discovery"
+		},
+	]
+}
