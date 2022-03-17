@@ -2,7 +2,7 @@
 
 Adds support for using Swift's `Codable` to encode/decode objects and structs to/from binday data.
 
-Adds Data-based encoders and decoders which can be used to code any codable object out-of-the-box.
+Adds `DataEncoder` and `DataDecoder` classes which can be used to code any codable object out-of-the-box to/from a `Data` object.
 
 Also adds `BinaryEncodable` and `BinaryDecodable` protocols which entities can adopt if they want to provide an alternative binary encoding or decoding scheme. 
 
