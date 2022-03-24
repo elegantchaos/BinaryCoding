@@ -5,6 +5,12 @@
 
 import Foundation
 
+// TODO: Change EnumForOptionSet to not require RawRepresentable where RawValue == String.
+//       Add explicit interface to EnumForOptionSet to do the conversion to/from strings
+//       and to/from flag/mask values.
+//       OptionSetFromEnum should still encode/decode them as lists of strings, but should
+//       do so explicitly using the to/from string interface on EnumForOptionSet.
+
 public protocol EnumForOptionSet: Codable, CaseIterable, Equatable, RawRepresentable where RawValue == String {
 }
 
