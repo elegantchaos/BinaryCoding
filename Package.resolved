@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/elegantchaos/Bytes.git",
         "state": {
           "branch": null,
-          "revision": "dfd75eda165e698ec971dafc7a1bf469ca361ac6",
-          "version": "0.2.3"
+          "revision": "545ee631d20b34cd9599f65c979c26e3384d5bf7",
+          "version": "0.3.3"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/elegantchaos/Matchable.git",
         "state": {
           "branch": null,
-          "revision": "0f523c77bf4b0dbbdc0838b952262ed45fab17f8",
-          "version": "1.0.6"
+          "revision": "d53e807009960aafbd54f6229c2542f906628b38",
+          "version": "1.0.7"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/elegantchaos/XCTestExtensions.git",
         "state": {
           "branch": null,
-          "revision": "fe22ce2b52bdfaec1ce62280a21c7c5b23650dc8",
-          "version": "1.4.5"
+          "revision": "40da6a09823c8a9bfa68b6487e92d86b8e8a821e",
+          "version": "1.5.1"
         }
       }
     ]

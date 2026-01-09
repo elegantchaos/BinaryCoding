@@ -28,7 +28,7 @@ extension Array where Element == CodingKey {
 protocol DescribableCodingKey: CodingKey {
 }
 
-extension DecodingError: CustomDebugStringConvertible {
+extension DecodingError: @retroactive CustomDebugStringConvertible {
     public var debugDescription: String {
         var description: String
         
